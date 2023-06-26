@@ -1,0 +1,31 @@
+# this is a comment
+drop *
+
+#keep event info
+keep run*
+keep event*
+keep luminosityBlock*
+
+#keep nanoAOD content
+
+#CHANGE: keep collections you want to analyze after without selection (e.g. muon triggers, Puppi MET)
+
+#keep custom variables
+keep nLepCand
+keep LepCand*
+keep nPhoCand
+keep PhoCand*
+keep nTauCand
+keep TauCand*
+keep nJetCand
+keep JetCand*
+keep gen*
+
+keep HLT_IsoMu24
+keep HLT_Ele32_WPTight_Gsf
+keep HLT_Photon200
+keep HLT_Photon35_TwoProngs35
+keep HLT*Photon*
+
+keep PuppiMET_pt
+keep PuppiMET_phi
