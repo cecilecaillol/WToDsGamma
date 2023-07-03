@@ -20,6 +20,7 @@ keep TauCand*
 keep nJetCand
 keep JetCand*
 keep gen*
+keep GenVtx*
 
 keep HLT_IsoMu24
 keep HLT_Ele32_WPTight_Gsf

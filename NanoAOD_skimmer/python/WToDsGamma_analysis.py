@@ -185,6 +185,14 @@ class Analysis(Module):
         for genp in genparticles:
             event.selectedGenParticles.append(genp)
 
+    def selectTracks(self, event):
+        event.selectedTracks = []
+        chargedPF = Collection(event, "ChargedPFCandidates")
+	for j in chargedPF:
+	   if abs(j.eta)<2.5 and j.pt>0.5: event.selectedTracks.append(j)
+        event.selectedTracks.sort(key=lambda x: x.pt, reverse=True)
+
+
     def analyze(self, event):
         """process event, return True (go to next module) or False (fail, go to next event)"""
         
@@ -200,7 +208,7 @@ class Analysis(Module):
         if self.isMC:
            self.selectGenParticles(event)
            for genp in event.selectedGenParticles:
-              #print genp.pdgId,genp.pt,genp.eta,genp.phi,event.selectedGenParticles[genp.genPartIdxMother].pdgId
+              print genp.pdgId,genp.pt,genp.eta,genp.phi,event.selectedGenParticles[genp.genPartIdxMother].pdgId
 	      if genp.pdgId==22 and abs(event.selectedGenParticles[genp.genPartIdxMother].pdgId)==24 : 
 		  event.gen_gamma.SetPtEtaPhiM(genp.pt,genp.eta,genp.phi,genp.mass)
                   event.gen_W.SetPtEtaPhiM(event.selectedGenParticles[genp.genPartIdxMother].pt,event.selectedGenParticles[genp.genPartIdxMother].eta,event.selectedGenParticles[genp.genPartIdxMother].phi,event.selectedGenParticles[genp.genPartIdxMother].mass)
@@ -214,6 +222,7 @@ class Analysis(Module):
                   event.gen_Km.SetPtEtaPhiM(genp.pt,genp.eta,genp.phi,genp.mass)
               if abs(genp.pdgId)==211 and abs(event.selectedGenParticles[genp.genPartIdxMother].pdgId)==431 :
                   event.gen_pi.SetPtEtaPhiM(genp.pt,genp.eta,genp.phi,genp.mass)
+	print "end of gen event"
 
 
         elSel = ElectronSelector()
@@ -227,7 +236,22 @@ class Analysis(Module):
         self.selectTaus(event, tauSel)
         self.selectPhotons(event, photonSel)
         self.selectAK4Jets(event)
-        
+        self.selectTracks(event)        
+
+        #event.track1=ROOT.TLorentzVector(0.0,0.0,0.0,0.0)
+        #event.track2=ROOT.TLorentzVector(0.0,0.0,0.0,0.0)
+        #event.track3=ROOT.TLorentzVector(0.0,0.0,0.0,0.0)
+        #event.tmptrack=ROOT.TLorentzVector(0.0,0.0,0.0,0.0)
+	#if event.gen_Ds.Pt()>35 and abs(event.gen_Ds.Eta())<2.5:
+	#  print "Ds coordinates: ",event.gen_Ds.Pt(),event.gen_Ds.Eta(),event.gen_Ds.Phi()
+	#  for track in event.selectedTracks: 
+	#     event.tmptrack.SetPtEtaPhiM(track.pt, track.eta, track.phi, 0.0)
+	#     print track.pt, track.eta, track.phi, track.fromPV, event.gen_Ds.DeltaR(event.tmptrack)
+	#     if (event.gen_Ds.DeltaR(event.tmptrack)<0.5 and event.track1.Pt()<0.5): event.track1.SetPtEtaPhiM(track.pt, track.eta, track.phi, 0.494)
+	#     elif (event.gen_Ds.DeltaR(event.tmptrack)<0.5 and event.track2.Pt()<0.5): event.track2.SetPtEtaPhiM(track.pt, track.eta, track.phi, 0.494)
+        #     elif (event.gen_Ds.DeltaR(event.tmptrack)<0.5 and event.track3.Pt()<0.5): event.track3.SetPtEtaPhiM(track.pt, track.eta, track.phi, 0.140)
+	#if (event.track3.Pt()>0): print "found 3 tracks with mass: ",event.track1.Pt(),event.track2.Pt(),event.track3.Pt(),(event.track1+event.track2+event.track3).M()
+
         #apply event selection at reco-level depending on the channel:
         #if self.channel=="tt":
         #    if (len(event.selectedElectrons)+len(event.selectedMuons))!=1: return False
